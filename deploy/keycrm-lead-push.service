@@ -1,0 +1,15 @@
+[Unit]
+Description=KeyCRM new lead webhook / notify service
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/keycrm-lead-push
+EnvironmentFile=/opt/keycrm-lead-push/.env
+ExecStart=/usr/bin/python3 /opt/keycrm-lead-push/src/server.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

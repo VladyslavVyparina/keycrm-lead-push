@@ -1,0 +1,56 @@
+# Запуск на сервері 173.242.54.197 (Termius)
+
+З мого Mac SSH пароль/ключ до сервера відсутній — потрібно встановити з Termius.
+
+## Варіант A (найшвидший)
+
+1. У Termius підключіться до `173.242.54.197` як `root` (або sudo-юзер).
+2. Через SFTP у Termius залийте файл:
+   `deploy/install_on_server.sh`
+   наприклад у `/root/install_on_server.sh`
+3. У консолі виконайте:
+
+```bash
+bash /root/install_on_server.sh
+```
+
+4. Перевірте:
+
+```bash
+systemctl status keycrm-lead-push --no-pager
+curl -sS http://127.0.0.1:8787/health
+curl -sS http://173.242.54.197:8787/health
+```
+
+Якщо зовнішня перевірка не відповідає — відкрийте TCP порт **8787** у firewall / панелі VPS:
+
+```bash
+ufw allow 8787/tcp && ufw reload
+```
+
+## Варіант B — якщо дасте мені SSH доступ
+
+Надішліть логін + пароль **або** додайте мій публічний ключ на сервер, і я задеплою сам.
+
+Публічний ключ з цієї машини можна показати командою `cat ~/.ssh/id_rsa.pub`.
+
+## Після встановлення — KeyCRM
+
+У тригері воронки (id=1, статус «Новий») додайте дію:
+
+- **Відправити Webhook**
+- URL: `http://173.242.54.197:8787/webhook/keycrm`
+- Method: **POST**
+
+І окремо (для push у мобільний додаток KeyCRM):
+
+- Дія **Створити задачу** → відповідальний Аліса, постановщик Влад
+
+## Корисні команди на сервері
+
+```bash
+systemctl status keycrm-lead-push
+journalctl -u keycrm-lead-push -f
+tail -f /opt/keycrm-lead-push/logs/events.log
+systemctl restart keycrm-lead-push
+```

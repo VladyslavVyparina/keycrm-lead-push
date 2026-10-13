@@ -1,0 +1,7 @@
+.env
+node_modules/
+logs/
+*.log
+.open-api.yml
+open-api.yml
+.DS_Store
